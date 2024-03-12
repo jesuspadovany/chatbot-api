@@ -14,7 +14,7 @@ use App\Http\Controllers\AnswerController;
 |
 */
 
-Route::post('/general_info', [App\Http\Controllers\AnswerController::class, 'process_all_info']);
+Route::post('/get_answer', [App\Http\Controllers\AnswerController::class, 'get_answer']);
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

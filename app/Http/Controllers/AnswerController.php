@@ -15,7 +15,7 @@ class AnswerController extends Controller
 
     }
 
-    public function process_all_info(Request $request){
+    public function get_answer(Request $request){
         $response = array();
         // $validator = Validator::make($request->all(), [
         //     'process'      => 'required',
@@ -30,11 +30,26 @@ class AnswerController extends Controller
         // }
 
         $process = Process::whereRaw('LOWER(name) = LOWER(?)', [$request->process])->first();
-        $answer = Answer::where('process_id', $process->id)->first();
-        $response['career'] = 'test';
-        $response['process'] = $process->name;
-        $response['steps'] = $answer->steps;
+        $answer = Answer::where('processes_id', $process->id);
+        if($request->has('question')){
+            $answer = $answer->byQuestionKey($request->question);
+        }
+        if($request->has('career')){
+            $answer = $answer->whereCareer($request->career);
+        }
         
+        
+        $answer = $answer->first();
+    
+        $documents = $answer->resources;
+        $response['status'] = 200;
+        $response['career'] = !empty($answer->career) ? $answer->career->title: '';
+        $response['process'] = !empty($answer->process) ? $answer->process->name : '';
+        $response['question'] = !empty($answer->question) ? $answer->question->title : '';
+        $response['answer'] = !empty($answer->description) ? $answer->description : '';
+        if(count($documents) > 0){
+            $response['documents'] = json_decode($documents[0]->url)[0]->download_link;
+        }
         return response()->json($response,200);
     }
 }
