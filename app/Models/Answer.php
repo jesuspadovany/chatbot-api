@@ -8,13 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Answer extends Model
 {
+
     protected $table = 'answers';
 
     protected $fillable = [
         'name',
     ];
 
-    public function resources(){
+    public function resources()
+    {
         return $this->hasMany(Resource::class, 'answers_id');
     }
 
@@ -33,19 +35,20 @@ class Answer extends Model
         return $this->belongsTo(Career::class, 'careers_id');
     }
 
-    public function scopeCarrerKey(Builder $query, $key) : void{
+    public function scopeCarrerKey(Builder $query, $key): void
+    {
         $career = Career::where('key', $key)->first();
-        if (!empty($career)){
+        if (!empty($career)) {
             $query->where('careers_id', $career->id);
         }
     }
 
-    public function scopeByQuestionKey(Builder $query, $key) : void{
+    public function scopeByQuestionKey(Builder $query, $key): void
+    {
         // dd($key);
         $question = Question::where('key', $key)->first();
-        if (!empty($question)){
+        if (!empty($question)) {
             $query->where('questions_id', $question->id);
         }
     }
-
 }
